@@ -4,14 +4,14 @@ import { AppContext } from "../Context/AppContext";
 import { router } from "expo-router";
 
 export default function Index() {
-    const { language, setLanguage, setSession, isLoading } = useContext(AppContext);
+    const { language, setLanguage, setSession } = useContext(AppContext);
 
     return (
         <View style={styles.container} >
             <Text style={styles.text} >{
-                language === "EN" ? "Hello, world!" : "Привет, мир!"
+                language === "EN" ? "Welcome Page" : "Стартовая страница"
             }</Text>
-            <Button title="Language" onPress={() => {
+            <Button title="Change language" onPress={() => {
                 if (language === "EN") {
                     setLanguage("RU")
                 } else {
@@ -19,9 +19,9 @@ export default function Index() {
                 }
             }} />
             <Button title={
-                language === "EN" ? "Sign out" : "Выйти"
+                language === "EN" ? "Sign in" : "Войти"
             } onPress={() => {
-                setSession(null)
+                setSession("session")
                 router.replace("/")
             }} />
         </View>
