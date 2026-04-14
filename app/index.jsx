@@ -2,26 +2,21 @@ import { useContext } from "react";
 import { Text, View, Button, StyleSheet } from "react-native";
 import { AppContext } from "../Context/AppContext";
 import { router } from "expo-router";
+import StyledText from "../components/StyledText";
 
 export default function Index() {
-    const { language, setLanguage, setSession, isLoading } = useContext(AppContext);
+    const { saveToStorage, userName, publicKey, privateKey } = useContext(AppContext);
+
+    console.log(userName);
+    
 
     return (
         <View style={styles.container} >
-            <Text style={styles.text} >{
-                language === "EN" ? "Hello, world!" : "Привет, мир!"
-            }</Text>
-            <Button title="Language" onPress={() => {
-                if (language === "EN") {
-                    setLanguage("RU")
-                } else {
-                    setLanguage("EN")
-                }
-            }} />
-            <Button title={
-                language === "EN" ? "Sign out" : "Выйти"
-            } onPress={() => {
-                setSession(null)
+            <Text style={styles.text} >Привет, {userName}</Text>
+            <StyledText variant={"subTitle"}>Public key: {publicKey}</StyledText>
+            <StyledText variant={"subTitle"}>Private key: {privateKey}</StyledText>
+            <Button title={"Выйти"} onPress={() => {
+                saveToStorage("session", null)
                 router.replace("/")
             }} />
         </View>

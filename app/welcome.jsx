@@ -1,29 +1,43 @@
-import { useContext } from "react";
-import { Text, View, Button, StyleSheet } from "react-native";
-import { AppContext } from "../Context/AppContext";
+import { View, StyleSheet } from "react-native";
+import StyledText from "../components/StyledText"
+import StyledButton from "../components/StyledButton"
+import { COLORS } from "../constants/colors";
 import { router } from "expo-router";
 
 export default function Index() {
-    const { language, setLanguage, setSession } = useContext(AppContext);
-
     return (
         <View style={styles.container} >
-            <Text style={styles.text} >{
-                language === "EN" ? "Welcome Page" : "Стартовая страница"
-            }</Text>
-            <Button title="Change language" onPress={() => {
-                if (language === "EN") {
-                    setLanguage("RU")
-                } else {
-                    setLanguage("EN")
-                }
-            }} />
-            <Button title={
-                language === "EN" ? "Sign in" : "Войти"
-            } onPress={() => {
-                setSession("session")
-                router.replace("/")
-            }} />
+            <View style={styles.title} >
+                <StyledText variant={"title"}>
+                    {"Добро\nпожаловать\nв "}
+                    <StyledText bold>Krypton</StyledText>
+                </StyledText>
+                <StyledText variant={"subTitle"}>
+                    <StyledText bold>Первый</StyledText>
+                    {" в мире\nработающий\n"}
+                    <StyledText bold>peer-to-peer</StyledText>
+                    {"\nмессенджер"}
+                </StyledText>
+                <StyledText variant={"subTitle"}>
+                    {"Жмите на "}
+                    <StyledText bold>"Войти"</StyledText>
+                    {" или\n"}
+                    <StyledText bold>"Регистрация"</StyledText>
+                    {" ниже и\nобщайтесь без\n"}
+                    <StyledText bold>ограничений</StyledText>
+                </StyledText>
+            </View>
+
+            <View style={styles.buttons} >
+                <StyledButton variant="primary" onPress={() => {}}>
+                    <StyledText variant="button" bold >Войти</StyledText>
+                </StyledButton>
+                <StyledButton variant="secondary" onPress={() => {
+                    router.replace("/register")
+                }}>
+                    <StyledText variant="button" bold >Регистрация</StyledText>
+                </StyledButton>
+            </View>
         </View>
     )
 }
@@ -32,12 +46,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#222222",
+        justifyContent: "space-between",
+        backgroundColor: COLORS.PRIMARY_BACKGROUND
     },
-    text: {
-        fontSize: 32,
-        color: "#fff",
-        fontFamily: "Inter"
+    title: {
+        marginTop: 150
+    },
+    buttons: {
+        marginBottom: 45
     }
 })

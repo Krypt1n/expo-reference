@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Stack } from "expo-router";
 import { AppContext, AppContextProvider } from "../Context/AppContext";
 import SplashScreen from "../components/SplashScreen";
+import "react-native-get-random-values"
 
 export default function Root() {
     return (
