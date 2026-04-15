@@ -1,39 +1,31 @@
 import { createContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
+import PubNub from "pubnub";
 
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
-    // Состояние для смены языка интерфейса
-    // const [language, setLanguage] = useState("EN");
-
-    // Состояние входа пользователя в Krypton
     const [session, setSessionState] = useState(false);
-
-    // Состояние для работы SplashScreen в моментах подгрузки данных
     const [isLoading, setIsLoading] = useState(true);
-
-    // Состояние для хранения public_key
     const [publicKey, setPublicKey] = useState("");
-
-    // Состояние для хранения private_key
     const [privateKey, setPrivateKey] = useState("");
-
-    // Состояние для хранения имени пользователя
     const [userName, setUserName] = useState("");
+    // Pubnub
+    const [pubnub, setPubnub] = useState(null);
+    const [messages, setMessages] = useState([]);
 
-    // Функция загрузки сессии из памяти
     const loadSession = async () => {
         try {
-            const storedSession = await SecureStore.getItemAsync('session') ? true : false;
+            const storedSession = !!(await SecureStore.getItemAsync('session'));
             setSessionState(storedSession)
         } finally {
             setIsLoading(false);
         }
     }
 
-    const loadUserData = async () => {
+    const loadData = async () => {
+        setIsLoading(true);
         try {
             const storedUserName = await SecureStore.getItemAsync('userName');
             const storedPublicKey = await SecureStore.getItemAsync('publicKey')
@@ -50,10 +42,45 @@ export const AppContextProvider = (props) => {
     // Загружаем данные при монтировании компоненты
     useEffect(() => {
         loadSession()
-        loadUserData()
+        loadData()
     }, [])
 
-    // Функция для установки состояния входа
+    useEffect(() => {
+        const initPubNub = async () => {
+            if(!userName) {
+                console.warn("userName not found")
+                return;
+            }
+
+            const pubnubInstance = new PubNub({
+                publishKey: "pub-c-2d931cf0-b8d6-4aeb-8a06-cd87945abc69",
+                subscribeKey: "sub-c-e6e8b19a-bafc-47bc-aab4-e818aaea8fc0",
+                userId: userName
+            });
+
+            pubnubInstance.addListener({
+                message: function (event) {
+                    setMessages(prev => [...prev, {
+                        message: event.message,
+                        channel: event.channel,
+                        timetoken: event.timetoken,
+                    }]);
+                },
+                status: function (event) {
+                    console.log("Status: " + event.category);
+                }
+            })
+
+            const channel = pubnubInstance.channel('users');
+            const subscription = channel.subscription({ receivePresenceEvents: true });
+            subscription.subscribe()
+
+            setPubnub(pubnubInstance);
+        }
+        
+        initPubNub()
+    }, [userName])
+
     const setSession = async (value) => {
         if (value) {
             setSessionState(true);
@@ -68,13 +95,12 @@ export const AppContextProvider = (props) => {
     }
 
     const saveToStorage = async (key, value) => {
-        switch(key) {
+        switch (key) {
             case "session":
-                setSession(value);
+                await setSession(value);
                 break;
             case "userName":
                 setUserName(value);
-                console.log("userName");
                 await SecureStore.setItemAsync("userName", value);
                 break;
             case "publicKey":
@@ -97,7 +123,9 @@ export const AppContextProvider = (props) => {
             publicKey,
             privateKey,
             userName,
-            saveToStorage
+            saveToStorage,
+            pubnub,
+            messages
         }} >
             {props.children}
         </AppContext.Provider>
