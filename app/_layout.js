@@ -3,10 +3,12 @@ import { Stack } from "expo-router";
 import { AppContext, AppContextProvider } from "../Context/AppContext";
 import SplashScreen from "../components/SplashScreen";
 import "react-native-get-random-values"
+import {StatusBar} from "react-native";
 
 export default function Root() {
     return (
         <AppContextProvider>
+            <StatusBar barStyle={"light-content"} />
             <RootNavigator />
         </AppContextProvider>
     )

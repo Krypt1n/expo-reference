@@ -6,6 +6,8 @@ const StyledText = ({variant, bold, ...props}) => {
         variant === "title" ? styles.title : null,
         variant === "subTitle" ? styles.subTitle : null,
         variant === "button" ? styles.button : null,
+        variant === "smallButton" ? styles.smallButton : null,
+        variant === "body" ? styles.smallButton : null,
         bold === true ? styles.bold : null
     ]} {...props} />
 }
@@ -36,6 +38,14 @@ const styles = StyleSheet.create({
         color: COLORS.PRIMARY_TEXT,
         lineHeight: 29,
         fontWeight: "regular",
+        paddingVertical: 10,
+    },
+    smallButton: {
+        fontSize: 16,
+        fontFamily: "Inter",
+        color: COLORS.PRIMARY_TEXT,
+        lineHeight: 29,
+        fontWeight: "bold",
         paddingVertical: 10,
     }
 })

@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import PubNub from "pubnub";
+import {c} from "react/compiler-runtime";
 
 export const AppContext = createContext();
 
@@ -14,6 +15,8 @@ export const AppContextProvider = (props) => {
     // Pubnub
     const [pubnub, setPubnub] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [channels, setChannels] = useState([]);
+    const [users, setUsers] = useState([]);
 
     const loadSession = async () => {
         try {
@@ -39,6 +42,24 @@ export const AppContextProvider = (props) => {
         }
     }
 
+    const loadUsers = async (pubnubInstance) => {
+        try {
+            await pubnubInstance.hereNow({channels: ["users"], includeUUIDs: true, includeState: true})
+                .then(
+                    result => {
+                        result["channels"]["users"]["occupants"].forEach((value, index, arr) => {
+                            setUsers(prev => [...prev, value.uuid]);
+                        })
+                    },
+                    error => {
+                        console.log("error(promise): " + error);
+                    }
+                )
+        } catch (error) {
+            console.log("error(catch): " + error)
+        }
+    }
+
     // Загружаем данные при монтировании компоненты
     useEffect(() => {
         loadSession()
@@ -48,7 +69,6 @@ export const AppContextProvider = (props) => {
     useEffect(() => {
         const initPubNub = async () => {
             if(!userName) {
-                console.warn("userName not found")
                 return;
             }
 
@@ -67,6 +87,9 @@ export const AppContextProvider = (props) => {
                     }]);
                 },
                 status: function (event) {
+                    if(event.category === "PNConnectedCategory") {
+                        loadUsers(pubnubInstance);
+                    }
                     console.log("Status: " + event.category);
                 }
             })
@@ -75,9 +98,11 @@ export const AppContextProvider = (props) => {
             const subscription = channel.subscription({ receivePresenceEvents: true });
             subscription.subscribe()
 
+            setChannels(prev => [...prev, channel]);
+
             setPubnub(pubnubInstance);
         }
-        
+
         initPubNub()
     }, [userName])
 
@@ -125,7 +150,10 @@ export const AppContextProvider = (props) => {
             userName,
             saveToStorage,
             pubnub,
-            messages
+            messages,
+            channels,
+            setChannels,
+            users
         }} >
             {props.children}
         </AppContext.Provider>
