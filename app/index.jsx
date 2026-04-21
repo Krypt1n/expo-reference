@@ -1,34 +1,46 @@
-import {useContext, useState} from "react";
-import {Text, View, Button, StyleSheet, FlatList, Modal, TouchableWithoutFeedback} from "react-native";
+import React, {useContext, useState} from "react";
+import {Button, FlatList, StyleSheet, View} from "react-native";
 import {AppContext} from "../Context/AppContext";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {COLORS} from "../constants/colors";
 import StyledButton from "../components/StyledButton";
 import StyledText from "../components/StyledText";
 import SearchUsersModal from "../components/SearchUsersModal";
+import {router} from "expo-router";
+import ChannelList from "../components/ChannelList";
+import ChannelItem from "../components/ChannelItem";
 
 export default function Index() {
-    const {messages, users} = useContext(AppContext);
+    const {users, saveToStorage, channels} = useContext(AppContext);
     const [visible, setVisible] = useState(false);
 
     return (
-        <SafeAreaView style={styles.container}>
-            {/*<FlatList data={messages} renderItem={({item}) => (*/}
-            {/*    <View style={styles.item}>*/}
-            {/*        <Text style={styles.text} >Channel: {item.channel}</Text>*/}
-            {/*        <Text style={styles.text} >Message: {item.message}</Text>*/}
-            {/*        <Text style={styles.text} >Timetoken: {item.timetoken}</Text>*/}
-            {/*    </View>*/}
-            {/*)}/>*/}
+        <View style={styles.container}>
 
-            <SearchUsersModal users={users} visible={visible} setVisible={setVisible}/>
+            <View style={styles.header} >
+                <StyledText variant={"subTitle"} >Chats</StyledText>
+            </View>
 
-            <StyledButton variant="secondary" onPress={() => {
-                setVisible(prev => !prev);
-            }}>
-                <StyledText variant="button">Поиск</StyledText>
-            </StyledButton>
-        </SafeAreaView>
+            <View style={styles.channelList} >
+                <FlatList data={channels} renderItem={({item}) => (
+                    <ChannelItem channelName={item} />
+                )}/>
+            </View>
+
+            <View style={styles.controlPanel} >
+                <SearchUsersModal users={users} visible={visible} setVisible={setVisible}/>
+
+                <StyledButton variant="secondary" onPress={() => {
+                    setVisible(prev => !prev);
+                }}>
+                    <StyledText variant="button">Поиск</StyledText>
+                </StyledButton>
+                <Button title={"Выйти"} onPress={() => {
+                    saveToStorage("session", false);
+                    router.replace("/");
+                }} />
+            </View>
+        </View>
     )
 }
 
@@ -39,18 +51,23 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: "#222222",
     },
-    text: {
-        fontSize: 14,
-        color: "#fff",
-        fontFamily: "Inter",
-        margin: 5
-    },
-    item: {
-        flex: 1,
-        marginBottom: 20,
+    header: {
+        height: 100,
+        width: "100%",
         backgroundColor: COLORS.SECONDARY_BUTTON,
-        paddingVertical: 10,
-        paddingHorizontal: 40,
-        borderRadius: 8,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "row",
+        paddingTop: 30,
+        paddingHorizontal: 10
+    },
+    channelList: {
+        flex: 7,
+        width: "100%",
+        marginTop: 10,
+    },
+    controlPanel: {
+        flex: 1,
+        marginBottom: 30
     }
 })

@@ -60,15 +60,9 @@ export default function SignIn() {
     saveToStorage("userName", userNameInput);
     saveToStorage("publicKey", keyPair.public_key);
     saveToStorage("privateKey", keyPair.private_key);
-
-    const initializationMessage = {
-      userName: userNameInput,
-      publicKey: keyPair.public_key,
-      privateKey: keyPair.private_key
-    }
-    //...
-    
     saveToStorage("session", true);
+    //...
+
     router.replace("/")
   }
 

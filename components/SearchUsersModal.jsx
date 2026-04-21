@@ -1,8 +1,8 @@
-import {Button, Modal, Text, View, StyleSheet, TouchableWithoutFeedback} from "react-native";
+import {Modal, View, StyleSheet, TouchableWithoutFeedback} from "react-native";
 import {COLORS} from "../constants/colors";
 import StyledTextInput from "./StyledTextInput";
 import ListOfUsers from "./ListOfUsers";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 
 const SearchUsersModal = ({visible, setVisible, users}) => {
     const [localUsers, setLocalUsers] = useState([]);
@@ -34,7 +34,7 @@ const SearchUsersModal = ({visible, setVisible, users}) => {
             <TouchableWithoutFeedback onPress={() => {setVisible(false)}}>
                 <View style={styles.modalBackground}>
                     <View style={styles.modalContent}>
-                        <StyledTextInput onChangeText={onUserSearch} variant={"dark"}/>
+                        <StyledTextInput placeholder="Поиск..." onChangeText={onUserSearch} variant={"dark"}/>
                         <ListOfUsers users={localUsers}/>
                     </View>
                 </View>

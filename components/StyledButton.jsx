@@ -7,6 +7,8 @@ const StyledButton = ({variant, children, ...props}) => {
         variant === "primary" ? styles.primary : null,
         variant === "secondary" ? styles.secondary : null,
         variant === "userCard" ? styles.userCard : null,
+        variant === "back" ? styles.back : null,
+        variant === "send" ? styles.send : null,
     ]} {...props}>
         {children}
     </TouchableOpacity>
@@ -31,6 +33,16 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.SECONDARY_BUTTON,
         width: 80,
         height: 50
+    },
+    back: {
+        backgroundColor: COLORS.PRIMARY_BACKGROUND,
+        width: 80,
+        height: 50
+    },
+    send: {
+        width: 45,
+        height: 45,
+        backgroundColor: COLORS.SECONDARY_BUTTON,
     }
 })
 

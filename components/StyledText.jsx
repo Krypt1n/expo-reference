@@ -8,6 +8,7 @@ const StyledText = ({variant, bold, ...props}) => {
         variant === "button" ? styles.button : null,
         variant === "smallButton" ? styles.smallButton : null,
         variant === "body" ? styles.smallButton : null,
+        variant === "message" ? styles.message : null,
         bold === true ? styles.bold : null
     ]} {...props} />
 }
@@ -47,6 +48,15 @@ const styles = StyleSheet.create({
         lineHeight: 29,
         fontWeight: "bold",
         paddingVertical: 10,
+    },
+    message: {
+        fontWeight: "600",
+        backgroundColor: COLORS.SECONDARY_BUTTON,
+        paddingHorizontal: 5,
+        paddingVertical: 3,
+        fontSize: 18,
+        color: COLORS.PRIMARY_TEXT,
+        borderRadius: 5
     }
 })
 
